@@ -1,4 +1,4 @@
-Based on your GitHub repository and Render setup, here's a professional README.md file:
+README.md file:
 
 ```markdown
 # Butler - LiveKit AI Assistant
