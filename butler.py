@@ -199,8 +199,7 @@ async def entrypoint(ctx: JobContext):
 # Configure worker options
 worker_options = WorkerOptions(
     entrypoint_fnc=entrypoint,
-    load_threshold=0.75,
-    health_port=8081
+    load_threshold=0.75
 )
 
 if __name__ == "__main__":
