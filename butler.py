@@ -2,6 +2,11 @@ import asyncio
 from typing import Annotated
 from datetime import datetime
 
+import os
+
+# Add port configuration
+PORT = int(os.environ.get("PORT", 10000))
+
 from livekit import agents, rtc
 from livekit.agents import JobContext, WorkerOptions, cli, tokenize, tts
 from livekit.agents.llm import (
@@ -58,8 +63,12 @@ async def get_video_track(room: rtc.Room):
 
 
 async def entrypoint(ctx: JobContext):
-    await ctx.connect()
-    print(f"Room name: {ctx.room.name}")
+    # Add port configuration to the context
+    ctx.port = PORT
+    
+    # Bind to the correct host and port
+    await ctx.connect(host="0.0.0.0", port=PORT)
+    print(f"Server started on port {PORT}")
 
     chat_context = ChatContext(
         messages=[
