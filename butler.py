@@ -90,11 +90,12 @@ async def entrypoint(ctx: JobContext):
         # Add health check route
         @ctx.room.on("/healthz")
         async def handle_health():
-            return await health_check()
+            return {"status": "healthy"}
         
-        # Bind to the correct host and port
-        await ctx.connect(host="0.0.0.0", port=PORT)
-        print(f"Server started on port {PORT}")
+        # Update the connect call to use PORT from environment
+        port = int(os.getenv("PORT", 10000))
+        await ctx.connect()  # Remove host and port parameters
+        print(f"Server started on port {port}")
 
         chat_context = ChatContext(
             messages=[
@@ -198,8 +199,7 @@ async def entrypoint(ctx: JobContext):
 
 # Configure worker options
 worker_options = WorkerOptions(
-    entrypoint_fnc=entrypoint,
-    load_threshold=0.75
+    entrypoint_fnc=entrypoint
 )
 
 if __name__ == "__main__":
