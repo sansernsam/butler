@@ -7,6 +7,20 @@ import os
 # Add port configuration
 PORT = int(os.environ.get("PORT", 10000))
 
+from livekit import rtc
+
+async def health_check():
+    return {"status": "healthy"}
+
+# Add to your entrypoint
+async def entrypoint(ctx: JobContext):
+    await ctx.connect(host="0.0.0.0", port=PORT)
+    
+    # Add health check route
+    @ctx.room.on("health")
+    async def handle_health():
+        return await health_check()
+
 from livekit import agents, rtc
 from livekit.agents import JobContext, WorkerOptions, cli, tokenize, tts
 from livekit.agents.llm import (
@@ -16,7 +30,6 @@ from livekit.agents.llm import (
 )
 from livekit.agents.voice_assistant import VoiceAssistant
 from livekit.plugins import deepgram, openai, silero
-
 
 class AssistantFunction(agents.llm.FunctionContext):
     """Enhanced assistant with visual analysis capabilities."""
@@ -60,7 +73,6 @@ async def get_video_track(room: rtc.Room):
                 break
 
     return await video_track
-
 
 async def entrypoint(ctx: JobContext):
     # Add port configuration to the context
@@ -155,7 +167,7 @@ async def entrypoint(ctx: JobContext):
     # Bilingual greeting
     await asyncio.sleep(1)
     await assistant.say(
-        "สวัสดีครับ/ค่ะ ผม/ดิฉันคือ Alloy ยินดีให้บริการครับ/ค่ะ\nHello! I'm Alloy. How may I assist you today?",
+        "สวัสดีครับ ผมคือ Alloy ยินดีให้บริการครับ \nHello! I'm Alloy. How may I assist you today?",
         allow_interruptions=True
     )
 
